@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Carbon;
 
 class Timebreak extends Model
 {
@@ -22,12 +24,16 @@ class Timebreak extends Model
         'time_comeback'
     ];
 
-    public static function createRecord($day_info)
+    /**
+     * @param  Collection $day_info
+     * @return JsonResponse
+     */
+    public static function createRecord(Collection $day_info): JsonResponse
     {
         $result = Timebreak::create([
             'day_id'       => $day_info[0]->id,
             'workplace_id' => $day_info[0]->workplace_id,
-            'time_leave'   => date('H:i:s'),
+            'time_leave'   => Carbon::createFromFormat('H:i:s', Carbon::now())
         ]);
 
         if ($result) {
@@ -38,7 +44,11 @@ class Timebreak extends Model
         return response()->json($json);
     }
 
-    public static function setTimeComeback($day_info)
+    /**
+     * @param  Collection $day_info
+     * @return JsonResponse
+     */
+    public static function setTimeComeback(Collection $day_info): JsonResponse
     {
         $result = Timebreak::where([
             'day_id' => $day_info[0]->id,
@@ -46,7 +56,7 @@ class Timebreak extends Model
             ->latest('id')
             ->first()
             ->update([
-                'time_comeback' => date('H:i:s'),
+                'time_comeback' => Carbon::createFromFormat('H:i:s', Carbon::now()),
             ]);
 
         if ($result) {

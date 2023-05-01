@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\UserApiController;
-use App\Http\Controllers\Api\TimeReportApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +16,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/login',     [UserApiController::class, 'login']);
-Route::get('/logout',    [UserApiController::class, 'logout']);
-Route::get('/startDay',  [TimeReportApiController::class, 'startDay']);
-Route::get('/pauseDay',  [TimeReportApiController::class, 'pauseDay']);
-Route::get('/resumeDay', [TimeReportApiController::class, 'resumeDay']);
-Route::get('/endDay',    [TimeReportApiController::class, 'endDay']);

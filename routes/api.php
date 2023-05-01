@@ -25,3 +25,5 @@ Route::post('/startDay',  [TimeReportApiController::class, 'startDay']);
 Route::post('/pauseDay',  [TimeReportApiController::class, 'pauseDay']);
 Route::post('/resumeDay', [TimeReportApiController::class, 'resumeDay']);
 Route::post('/endDay',    [TimeReportApiController::class, 'endDay']);
+
+Route::get('/downloadReport', [ExcelApiController::class, 'downloadPersonalReport']);

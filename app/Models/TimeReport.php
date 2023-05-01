@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Ramsey\Uuid\Type\Time;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TimeReport extends Model
 {
@@ -26,7 +28,11 @@ class TimeReport extends Model
         'workplace_id'
     ];
 
-    public static function createRecord($workplace_id)
+    /**
+     * @param  int $workplace_id
+     * @return JsonResponse
+     */
+    public static function createRecord(int $workplace_id): JsonResponse
     {
         $result = TimeReport::create([
             'user_id'      => Auth::id(),
@@ -43,21 +49,46 @@ class TimeReport extends Model
         return response()->json($json);
     }
 
-    public static function currentDayInfo()
+    /**
+     * @param  Collection $day_info
+     * @param  float $total_timebreak
+     * @param  float $total
+     * @return JsonResponse
+     */
+    public static function setTotal(Collection $day_info, float $total_timebreak, float $total): JsonResponse
+    {
+        $result = TimeReport::where(['id' => $day_info[0]->id])
+                ->update([
+                    'time_end'        => date('H:i:s'),
+                    'total_timebreak' => $total_timebreak,
+                    'total'           => $total
+                ]);
+
+        if ($result) {
+            $json['success'] = 'You are successfully ended working day';
+        } else {
+            $json['error'] = 'Failed to end working day';
+        }
+
+        return response()->json($json);
+    }
+
+    public static function currentDayInfo() : Collection
     {
         return TimeReport::where([
             'user_id' => Auth::id(),
             'date'    => date('Y-m-d')
-        ])->get();
+        ])
+            ->get();
     }
 
-    public static function setTotal($day_info, $total_timebreak, $total)
+    public static function getPersonalReport() : Collection
     {
-        return TimeReport::where(['id' => $day_info[0]->id])
-                ->update([
-                    'time_end' => date('H:i:s'),
-                    'total_timebreak' => $total_timebreak,
-                    'total' => $total
-                ]);
+        return TimeReport::where([
+            'user_id' => Auth::id()
+        ])
+            ->join('users', 'time_reports.user_id', '=', 'users.id', 'left')
+            ->whereMonth('date' , Carbon::now()->month)
+            ->get();
     }
 }
