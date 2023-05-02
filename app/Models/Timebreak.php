@@ -23,47 +23,4 @@ class Timebreak extends Model
         'time_leave',
         'time_comeback'
     ];
-
-    /**
-     * @param  Collection $day_info
-     * @return JsonResponse
-     */
-    public static function createRecord(Collection $day_info): JsonResponse
-    {
-        $result = Timebreak::create([
-            'day_id'       => $day_info[0]->id,
-            'workplace_id' => $day_info[0]->workplace_id,
-            'time_leave'   => Carbon::createFromFormat('H:i:s', Carbon::now())
-        ]);
-
-        if ($result) {
-            $json['success'] = 'You are successfully paused working day';
-        } else {
-            $json['error'] = 'Failed to pause the day';
-        }
-        return response()->json($json);
-    }
-
-    /**
-     * @param  Collection $day_info
-     * @return JsonResponse
-     */
-    public static function setTimeComeback(Collection $day_info): JsonResponse
-    {
-        $result = Timebreak::where([
-            'day_id' => $day_info[0]->id,
-        ])
-            ->latest('id')
-            ->first()
-            ->update([
-                'time_comeback' => Carbon::createFromFormat('H:i:s', Carbon::now()),
-            ]);
-
-        if ($result) {
-            $json['success'] = 'You are successfully resumed working day';
-        } else {
-            $json['error'] = 'Failed to resume working day';
-        }
-        return response()->json($json);
-    }
 }

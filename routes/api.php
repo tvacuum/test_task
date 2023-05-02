@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\UserApiController;
 use App\Http\Controllers\Api\TimeReportApiController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\ExcelApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,14 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::controller(UserApiController::class)->group(function () {
+    Route::post('/register',  'create');
+    Route::post('/login',     'login');
+    Route::post('/logout',    'logout');
+});
 
-Route::post('/register',  [UserApiController::class, 'create']);
-Route::post('/login',     [UserApiController::class, 'login']);
-Route::post('/logout',    [UserApiController::class, 'logout']);
 
-Route::post('/startDay',  [TimeReportApiController::class, 'startDay']);
-Route::post('/pauseDay',  [TimeReportApiController::class, 'pauseDay']);
-Route::post('/resumeDay', [TimeReportApiController::class, 'resumeDay']);
-Route::post('/endDay',    [TimeReportApiController::class, 'endDay']);
+Route::controller(TimeReportApiController::class)->group(function () {
+    Route::post('/startDay',  'startDay');
+    Route::post('/pauseDay',  'pauseDay');
+    Route::post('/resumeDay', 'resumeDay');
+    Route::post('/endDay',    'endDay');
+    Route::post('/addComment', 'addComment');
+});
 
-Route::get('/downloadReport', [ExcelApiController::class, 'downloadPersonalReport']);
+Route::get('/getPersonalReport', [ExcelApiController::class, 'getPersonalReport']);

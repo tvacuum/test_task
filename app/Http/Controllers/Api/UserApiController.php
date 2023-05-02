@@ -2,66 +2,48 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
+use App\Actions\User\CreateAction;
+use App\Actions\User\LoginAction;
+use App\Actions\User\LogoutAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserCreateRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\User\CreateUserRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
 
 class UserApiController extends Controller
 {
-    public function create(UserCreateRequest $request): JsonResponse
+    /**
+     * Create user method
+     *
+     * @param CreateUserRequest $request
+     * @param CreateAction $createAction
+     * @return JsonResponse
+     */
+    public function create(CreateUserRequest $request, CreateAction $createAction): JsonResponse
     {
-        session()->save();
-
-        $photo_path = $request->file('photo')->store('users_photoes', 'public');
-
-        $new_user = User::create([
-            'firstname' => $request['firstname'],
-            'lastname'  => $request['lastname'],
-            'email'     => $request['email'],
-            'phone'     => $request['phone'],
-            'password'  => bcrypt($request['password']),
-            'birthday'  => $request['birthday'],
-            'photo'     => $photo_path
-        ]);
-
-        if ($new_user) {
-            $json['success'] = 'User successfully created';
-        } else {
-            $json['error'] = 'Failed to create user';
-        }
-        return response()->json($json);
+        return $createAction($request);
     }
 
-    public function login(Request $request): JsonResponse
+    /**
+     * Login user method
+     *
+     * @param Request $request
+     * @param LoginAction $loginAction
+     * @return JsonResponse
+     */
+    public function login(Request $request, LoginAction $loginAction): JsonResponse
     {
-        $result = auth("web")->attempt([
-            is_numeric($request->login) ? 'phone' : 'email' => $request->login,
-            'password' => $request->password
-        ]);
-
-        if ($result) {
-            session()->regenerate();
-
-            $json['success'] = 'You are successfully logged in';
-        } else {
-            $json['error'] = 'Failed to login';
-        }
-
-        return response()->json($json);
+        return $loginAction($request);
     }
 
-    public function logout(): JsonResponse
+    /**
+     * Logout user method
+     *
+     * @param LogoutAction $logoutAction
+     * @return JsonResponse
+     */
+    public function logout(LogoutAction $logoutAction): JsonResponse
     {
-        Session::flush();
-
-        Auth::logout();
-
-        $json['success'] = 'User successfully logged out';
-
-        return response()->json($json);
+        return $logoutAction();
     }
 }

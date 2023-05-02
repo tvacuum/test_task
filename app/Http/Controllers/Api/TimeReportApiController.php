@@ -8,49 +8,69 @@ use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Time\StartDayRequest;
+use App\Actions\Time\EndDayAction;
+use App\Actions\Time\PauseDayAction;
+use App\Actions\Time\StartDayAction;
+use App\Actions\Time\ResumeDayAction;
+use App\Actions\Time\AddCommentAction;
 
 class TimeReportApiController extends Controller
 {
-    public function startDay(Request $request) : JsonResponse
+    /**
+     * Start working day method
+     *
+     * @param StartDayRequest $request
+     * @param StartDayAction $startDayAction
+     * @return JsonResponse
+     */
+    public function startDay(StartDayRequest $request, StartDayAction $startDayAction) : JsonResponse
     {
-        return TimeReport::createRecord($request->workplace_id);
+        return $startDayAction($request);
     }
 
-    public function pauseDay(): JsonResponse
+    /**
+     * Pause working day method
+     *
+     * @param PauseDayAction $pauseDayAction
+     * @return JsonResponse
+     */
+    public function pauseDay(PauseDayAction $pauseDayAction): JsonResponse
     {
-        $day_info = TimeReport::currentDayInfo();
-
-        return Timebreak::createRecord($day_info);
+        return $pauseDayAction();
     }
 
-    public function resumeDay(): JsonResponse
+    /**
+     * Resume working day method
+     *
+     * @param ResumeDayAction $resumeDayAction
+     * @return JsonResponse
+     */
+    public function resumeDay(ResumeDayAction $resumeDayAction): JsonResponse
     {
-        $day_info = TimeReport::currentDayInfo();
-
-        return Timebreak::setTimeComeback($day_info);
+        return $resumeDayAction();
     }
 
-    public function endDay(): JsonResponse
+    /**
+     * End working day method
+     *
+     * @param EndDayAction $endDayAction
+     * @return JsonResponse
+     */
+    public function endDay(EndDayAction $endDayAction): JsonResponse
     {
-        $day_info = TimeReport::currentDayInfo();
+        return $endDayAction();
+    }
 
-        $timebreaks = Timebreak::where(['day_id' => $day_info[0]->id])->get();
-
-        $total_timebreak = 0;
-
-        if (isset($timebreaks)) {
-            foreach ($timebreaks as $timebreak) {
-                $time_leave       = Carbon::createFromFormat('H:i:s', $timebreak['time_leave'])->timestamp;
-                $time_comeback    = Carbon::createFromFormat('H:i:s', $timebreak['time_comeback'])->timestamp;
-                $rounded_diff     = round((($time_comeback - $time_leave) / 32400), 4);
-                $total_timebreak += $rounded_diff;
-            }
-        }
-
-        $time_start = Carbon::createFromFormat('H:i:s', $day_info[0]->time_start)->timestamp;
-        $time_end   = Carbon::parse(date('H:i:s'))->timestamp;
-        $total = round((($time_end - $time_start) / 32400), 2) - $total_timebreak;
-
-        return TimeReport::setTotal($day_info, $total_timebreak, $total);
+    /**
+     * Add comment for current working day
+     *
+     * @param Request $request
+     * @param AddCommentAction $addCommentAction
+     * @return JsonResponse
+     */
+    public function addComment(Request $request, AddCommentAction $addCommentAction): JsonResponse
+    {
+        return $addCommentAction($request);
     }
 }
