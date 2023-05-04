@@ -24,12 +24,13 @@ class User extends Authenticatable
         'birthday',
         'quote',
         'photo',
-        'telegram_id'
+        'telegram_id',
+        'verified'
     ];
 
     protected $hidden = [
-      'password',
-      'email',
-      'phone'
+        'password',
+        'email',
+        'phone'
     ];
 }

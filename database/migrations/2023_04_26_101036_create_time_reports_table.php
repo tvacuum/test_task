@@ -23,6 +23,8 @@ return new class extends Migration
             $table->time('time_end')->nullable();
             $table->float('total_timebreak')->nullable();
             $table->float('total')->nullable();
+            $table->boolean('without_lunch')->nullable();
+            $table->boolean('forgot_flag')->nullable();
             $table->text('comment')->nullable();
             $table->unsignedBigInteger('workplace_id')->index('workplace_id');
             $table->foreign('workplace_id')

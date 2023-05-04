@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\DepartmentApiController;
+use App\Http\Controllers\Api\PositionApiController;
 use App\Http\Controllers\Api\UserApiController;
 use App\Http\Controllers\Api\TimeReportApiController;
 use App\Http\Controllers\Api\ExcelApiController;
@@ -28,7 +30,13 @@ Route::controller(TimeReportApiController::class)->group(function () {
     Route::post('/pauseDay',  'pauseDay');
     Route::post('/resumeDay', 'resumeDay');
     Route::post('/endDay',    'endDay');
-    Route::post('/addComment', 'addComment');
+    Route::post('/addComment','addComment');
 });
 
-Route::get('/getPersonalReport', [ExcelApiController::class, 'getPersonalReport']);
+Route::post('/departments',DepartmentApiController::class);
+Route::post('/positions',PositionApiController::class);
+
+Route::get('/downloadPersonalReport', [ExcelApiController::class, 'getPersonalReport']);
+Route::get('/downloadTotalReport',    [ExcelApiController::class, 'getTotalReport']);
+Route::get('/downloadFullReport',     [ExcelApiController::class, 'getFullReport']);
+

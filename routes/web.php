@@ -25,3 +25,6 @@ Route::get('/pauseDay',  [TimeReportApiController::class, 'pauseDay']);
 Route::get('/resumeDay', [TimeReportApiController::class, 'resumeDay']);
 Route::get('/endDay',    [TimeReportApiController::class, 'endDay']);
 Route::get('/getPersonalReport', [ExcelApiController::class, 'getPersonalReport']);
+Route::get('/getTotalReport',     [ExcelApiController::class, 'getTotalReport']);
+Route::get('/getFullReport',     [ExcelApiController::class, 'getFullReport']);
+

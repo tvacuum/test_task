@@ -7,6 +7,12 @@ use Illuminate\Http\JsonResponse;
 
 class LoginAction
 {
+    /**
+     * Authenticate by phone / email
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function __invoke(Request $request): JsonResponse
     {
         $result = auth("web")->attempt([

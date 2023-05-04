@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -24,25 +23,46 @@ class TimeReport extends Model
         'time_end',
         'total_timebreak',
         'total',
+        'without_lunch',
+        'forgot_flag',
         'comment',
         'workplace_id'
     ];
-    public static function currentDayInfo(): Collection
+    public static function currentDayInfo(): TimeReport | null
     {
         return TimeReport::where([
             'user_id' => Auth::id(),
             'date'    => date('Y-m-d')
         ])
-            ->get();
+            ->first();
     }
 
-    public static function getPersonalReport(): Collection
+    public static function lastDayInfo(): TimeReport | null
+    {
+        return TimeReport::where([
+            'user_id' => Auth::id()
+        ])
+            ->latest('date')
+            ->first();
+    }
+
+    public static function getPersonalReport(): Collection | null
     {
         return TimeReport::where([
             'user_id' => Auth::id()
         ])
             ->join('users', 'time_reports.user_id', '=', 'users.id', 'left')
-            ->whereMonth('date' , Carbon::now()->month)
+            ->whereMonth('date', Carbon::now()->month)
+            ->get();
+    }
+
+    public static function getTotalReport(): Collection | null
+    {
+        return TimeReport::select('time_reports.*', 'users.firstname', 'users.lastname', 'workplaces.name')
+            ->join('workplaces', 'time_reports.workplace_id', '=', 'workplaces.id')
+            ->join('users', 'time_reports.user_id', '=', 'users.id', 'left')
+            ->whereMonth('time_reports.date', Carbon::now()->month)
+            ->orderBy('time_reports.user_id')->orderBy('time_reports.date')
             ->get();
     }
 }

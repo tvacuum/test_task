@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class Timebreak extends Model
 {
@@ -19,8 +17,18 @@ class Timebreak extends Model
     protected $fillable = [
         'user_id',
         'day_id',
-        'workplace_id',
+        'leave_workplace_id',
+        'comeback_workplace_id',
         'time_leave',
         'time_comeback'
     ];
+
+    public static function getLastTimebreak($day_id): Timebreak | null
+    {
+        return Timebreak::where([
+            'day_id' => $day_id
+        ])
+            ->latest('id')
+            ->first();
+    }
 }

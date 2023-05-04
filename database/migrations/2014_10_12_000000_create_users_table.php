@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('quote')->nullable();
             $table->text('photo');
             $table->text('telegram_id')->nullable();
+            $table->boolean('verified')->default(1);
         });
     }
 

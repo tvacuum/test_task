@@ -4,25 +4,38 @@ namespace App\Actions\Time;
 
 use App\Models\Timebreak;
 use App\Models\TimeReport;
+use App\Models\UserSchedule;
+use Carbon\CarbonInterval;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
 
 class EndDayAction
 {
-    public function __invoke(): JsonResponse
+    /**
+     * End current working day for Authenticated user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function __invoke(Request $request): JsonResponse
     {
         $day_info = TimeReport::currentDayInfo();
 
-        $total_timebreak = $this->getTotalTimebreak($day_info[0]->id);
+        $schedule = UserSchedule::getUserSchedule();
 
-        $total = $this->getTotal($day_info, $total_timebreak);
+        $work_schedule   = CarbonInterval::createFromFormat('H:i:s', $schedule->time)->totalSeconds;
 
-        $result = TimeReport::where(['id' => $day_info[0]->id])
+        $total_timebreak = $this->getTotalTimebreak($day_info->id, $work_schedule);
+
+        $total = $this->getTotal($day_info, $work_schedule, $total_timebreak, $request->without_lunch);
+
+        $result = TimeReport::where(['id' => $day_info->id])
             ->update([
                 'time_end'        => Carbon::now()->toTimeString(),
                 'total_timebreak' => $total_timebreak,
-                'total'           => $total
+                'total'           => $total['total'],
+                'without_lunch'   => $total['lunch_flag']
             ]);
 
         if ($result) {
@@ -34,7 +47,14 @@ class EndDayAction
         return response()->json($json);
     }
 
-    private function getTotalTimebreak(int $day_id): float|int
+    /**
+     * Calculate Time break's total for current working day
+     *
+     * @param int $day_id
+     * @param float $work_schedule
+     * @return float
+     */
+    public static function getTotalTimebreak(int $day_id, float $work_schedule): float
     {
         $timebreaks = Timebreak::where(['day_id' => $day_id])->get();
 
@@ -44,7 +64,7 @@ class EndDayAction
             foreach ($timebreaks as $timebreak) {
                 $time_leave       = Carbon::createFromFormat('H:i:s', $timebreak['time_leave'])->timestamp;
                 $time_comeback    = Carbon::createFromFormat('H:i:s', $timebreak['time_comeback'])->timestamp;
-                $rounded_diff     = round((($time_comeback - $time_leave) / 32400), 4);
+                $rounded_diff     = round((($time_comeback - $time_leave) / $work_schedule), 4);
                 $total_timebreak += $rounded_diff;
             }
         }
@@ -52,13 +72,34 @@ class EndDayAction
         return floatval($total_timebreak);
     }
 
-    private function getTotal(Collection $day_info, float $total_timebreak): float
+    /**
+     * Calculate Total for current working day
+     *
+     * @param TimeReport $day_info
+     * @param float $work_schedule
+     * @param float $total_timebreak
+     * @param bool|null $without_lunch
+     * @return array
+     */
+    public static function getTotal(TimeReport $day_info, float $work_schedule, float $total_timebreak, bool $without_lunch = null): array
     {
-        $time_start = Carbon::createFromFormat('H:i:s', $day_info[0]->time_start)->timestamp;
-        $time_end   = Carbon::now()->timestamp;
+        $time_start = Carbon::createFromFormat('H:i:s', $day_info->time_start)->timestamp;
 
-        $pre_total  = (($time_end - $time_start) / 32400) - $total_timebreak;
+        if(isset($day_info->time_end)) {
+            $time_end = Carbon::createFromFormat('H:i:s', $day_info->time_end)->timestamp;
+        } else {
+            $time_end = Carbon::now()->timestamp;
+        }
 
-        return round($pre_total, 2);
+        if($without_lunch) {
+            $pre_total   = (($time_end - $time_start) / ($work_schedule - 3600)) - $total_timebreak;
+        } else {
+            $pre_total   = (($time_end - $time_start) / $work_schedule) - $total_timebreak;
+        }
+
+        return [
+            'total'      => round($pre_total, 2),
+            'lunch_flag' => $without_lunch
+        ];
     }
 }

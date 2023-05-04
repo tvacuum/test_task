@@ -30,6 +30,7 @@ class CreateUserRequest extends FormRequest
             "password"      => ["required", "string", "min:6", "confirmed"],
             "birthday"      => ["required", "date"],
             "photo"         => ["required", "image:jpg,jpeg,png"],
+            "position_id"   => ["required", "numeric"]
         ];
     }
 }

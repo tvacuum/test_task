@@ -9,6 +9,11 @@ use Illuminate\Http\JsonResponse;
 
 class PauseDayAction
 {
+    /**
+     * Pause current working day for Authenticated user
+     *
+     * @return JsonResponse
+     */
     public function __invoke(): JsonResponse
     {
         $day_info = TimeReport::currentDayInfo();
@@ -16,9 +21,9 @@ class PauseDayAction
         $time = Carbon::now();
 
         $data = [
-            'day_id'       => $day_info[0]->id,
-            'workplace_id' => $day_info[0]->workplace_id,
-            'time_leave'   => $time->toTimeString()
+            'day_id'             => $day_info->id,
+            'leave_workplace_id' => $day_info->workplace_id,
+            'time_leave'         => $time->toTimeString()
         ];
 
         if (Timebreak::create($data)) {

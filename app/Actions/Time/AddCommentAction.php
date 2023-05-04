@@ -8,14 +8,20 @@ use Illuminate\Http\JsonResponse;
 
 class AddCommentAction
 {
+    /**
+     * Add comment for current working day for Authenticated user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function __invoke(Request $request): JsonResponse
     {
         $day_info = TimeReport::currentDayInfo();
 
-        $result = TimeReport::where(['id' => $day_info[0]->id])
-            ->update([
-                'comment' => $request->comment
-            ]);
+        $result = $day_info->where(['id' => $day_info->id])
+                    ->update([
+                        'comment' => $day_info->comment.' '.$request->comment
+                ]);
 
         if ($result) {
             $json['success'] = 'Your comment has been successfully attached';

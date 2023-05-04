@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Timebreak;
-use App\Models\TimeReport;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -24,7 +21,7 @@ class TimeReportApiController extends Controller
      * @param StartDayAction $startDayAction
      * @return JsonResponse
      */
-    public function startDay(StartDayRequest $request, StartDayAction $startDayAction) : JsonResponse
+    public function startDay(StartDayRequest $request, StartDayAction $startDayAction): JsonResponse
     {
         return $startDayAction($request);
     }
@@ -43,23 +40,25 @@ class TimeReportApiController extends Controller
     /**
      * Resume working day method
      *
+     * @param Request $request
      * @param ResumeDayAction $resumeDayAction
      * @return JsonResponse
      */
-    public function resumeDay(ResumeDayAction $resumeDayAction): JsonResponse
+    public function resumeDay(Request $request,ResumeDayAction $resumeDayAction): JsonResponse
     {
-        return $resumeDayAction();
+        return $resumeDayAction($request);
     }
 
     /**
      * End working day method
      *
+     * @param Request $request
      * @param EndDayAction $endDayAction
      * @return JsonResponse
      */
-    public function endDay(EndDayAction $endDayAction): JsonResponse
+    public function endDay(Request $request, EndDayAction $endDayAction): JsonResponse
     {
-        return $endDayAction();
+        return $endDayAction($request);
     }
 
     /**

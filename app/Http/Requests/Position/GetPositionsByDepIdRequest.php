@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Time;
+namespace App\Http\Requests\Position;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\ValidationRule;
 
-class StartDayRequest extends FormRequest
+class GetPositionsByDepIdRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,12 +17,12 @@ class StartDayRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            "workplace_id" => ["required", "numeric"]
+            'department_id' => ["required", "numeric"]
         ];
     }
 }

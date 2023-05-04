@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\UserDepartment;
+use App\Models\UserPosition;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UserDepartmentSeeder extends Seeder
+class UserPositionTableSeeder extends Seeder
 {
-    static $rows = [
-        ['user_id' => 1, 'department_id' => 1],
-        ['user_id' => 2, 'department_id' => 2],
-        ['user_id' => 3, 'department_id' => 3]
+    static array $rows = [
+        ['user_id' => 1, 'position_id' => 1],
+        ['user_id' => 2, 'position_id' => 2],
+        ['user_id' => 3, 'position_id' => 3]
     ];
     /**
      * Run the database seeds.
@@ -19,7 +19,7 @@ class UserDepartmentSeeder extends Seeder
     public function run(): void
     {
         foreach (self::$rows as $row) {
-            UserDepartment::create($row);
+            UserPosition::create($row);
         }
     }
 }

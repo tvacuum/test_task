@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Session;
 
 class LogoutAction
 {
+    /**
+     * Logout Authenticated user
+     *
+     * @return JsonResponse
+     */
     public function __invoke(): JsonResponse
     {
         Session::flush();

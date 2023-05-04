@@ -18,8 +18,13 @@ return new class extends Migration
                 ->references('id')
                 ->on('time_reports')
                 ->cascadeOnDelete();
-            $table->unsignedBigInteger('workplace_id')->index('workplace_id')->nullable();
-            $table->foreign('workplace_id')
+            $table->unsignedBigInteger('leave_workplace_id')->index('leave_workplace_id')->nullable();
+            $table->foreign('leave_workplace_id')
+                ->references('id')
+                ->on('workplaces')
+                ->cascadeOnUpdate();
+            $table->unsignedBigInteger('comeback_workplace_id')->index('comeback_workplace_id')->nullable();
+            $table->foreign('comeback_workplace_id')
                 ->references('id')
                 ->on('workplaces')
                 ->cascadeOnUpdate();

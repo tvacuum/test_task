@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_departments', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->index('user_id');
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->cascadeOnDelete();
+        Schema::create('department_positions', function (Blueprint $table) {
             $table->unsignedBigInteger('department_id')->index('department_id');
             $table->foreign('department_id')
                 ->references('id')
                 ->on('departments')
+                ->cascadeOnDelete();
+            $table->unsignedBigInteger('position_id')->index('position_id');
+            $table->foreign('position_id')
+                ->references('id')
+                ->on('positions')
                 ->cascadeOnDelete();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_departments');
+        Schema::dropIfExists('department_roles');
     }
 };

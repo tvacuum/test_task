@@ -5,22 +5,32 @@ namespace App\Actions\Time;
 use App\Models\Timebreak;
 use App\Models\TimeReport;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class ResumeDayAction
 {
-    public function __invoke(): JsonResponse
+    /**
+     * Resume current working day for Authenticated user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function __invoke(Request $request): JsonResponse
     {
         $day_info = TimeReport::currentDayInfo();
 
-        $time = Carbon::now();
-
         $result = Timebreak::where([
-            'day_id' => $day_info[0]->id,
+            'day_id' => $day_info->id,
         ])
             ->latest('id')
             ->first()
-            ->update(['time_comeback' => $time->toTimeString()]);
+            ->update([
+                'time_comeback'          => Carbon::now()->toTimeString(),
+                'comeback_workplace_id'  => $request->workplace_id
+            ]);
+
+        $day_info->update(['workplace_id' => $request->workplace_id]);
 
         if ($result) {
             $json['success'] = 'You are successfully resumed working day';
