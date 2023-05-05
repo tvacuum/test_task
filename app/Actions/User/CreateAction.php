@@ -26,6 +26,8 @@ class CreateAction
 
         $data['photo'] = $photo_path;
 
+        $data['password'] = bcrypt($request->password);
+
         $user = User::create($data);
 
         if ($user) {

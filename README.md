@@ -12,9 +12,20 @@
 >>> * `POST` - `../api/positions` - `request_body {"department_id": numeric}`
 > 
 >> ### Авторизация 
->> * `POST` - `../api/login - request_body {"login(phone)": str || "login(email)": str, "password": text}`
+>> * `POST` - `../api/login - request_body {"login(phone)": str || "login(email)": str, "password": str}`
 >> * {"success" : "You are successfully logged in"}
 >> * {"error"   : "Failed to login"}
+> 
+>> ### Редактировать профиль
+>> * `POST` - `../api/cabinet/userInfoEdit - request_body {"firstname": str, "lastname": str, "email": str, "phone": str, "birthday": str(YYYY-MM-DD), "quote": str, "telegram_id": numeric}`
+>> * {"success" : "User's data successfully updated"}
+>> * {"error"   : "Failed to update user's data"}
+>
+>> ### Редактировать пароль
+>> * `POST` - `../api/cabinet/changePassword - request_body {"current_password": str(min 6), "password": str(min 6), "password_confirmation": str(min 6)}`
+>> * {"success" : "You successfully changed your password"}
+>> * {"error"   : "Current password is incorrect"}
+>> * {"error"   : "New Password cannot be same as your current password"}
 > 
 >> ### Выход 
 >> * `POST` - `../api/logout`
@@ -48,16 +59,16 @@
 
 ## Отчётность
 >> ### Скачать отчёт факт-смен для одного сотрудника
->> * `GET` - `../api/downloadPersonalReport`
+>> * `GET` - `../api/cabinet/downloadPersonalReport`
 >> * {"success" : "Personal fact report successfully download"}
 >> * {"error"   : "Failed to find any records in database for that month"}
 >
 >> ### Скачать отчёт факт-смен для всех сотрудников
->> * `GET` - `../api/downloadTotalReport`
+>> * `GET` - `../api/cabinet/downloadTotalReport`
 >> * {"success" : "Total fact report successfully download"}
 >> * {"error"   : "Failed to find any records in database for that month"}
 >
 >> ### Скачать полный отчёт для всех сотрудников
->> * `GET` - `../api/downloadFullReport`
+>> * `GET` - `../api/cabinet/downloadFullReport`
 >> * {"success" : "Full report successfully download"}
 >> * {"error"   : "Failed to find any records in database for that month"}

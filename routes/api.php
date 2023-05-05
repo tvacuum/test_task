@@ -33,10 +33,17 @@ Route::controller(TimeReportApiController::class)->group(function () {
     Route::post('/addComment','addComment');
 });
 
-Route::post('/departments',DepartmentApiController::class);
+Route::group([
+    'prefix' => 'cabinet',
+], function () {
+    Route::get('/downloadPersonalReport', [ExcelApiController::class, 'getPersonalReport']);
+    Route::get('/downloadTotalReport',    [ExcelApiController::class, 'getTotalReport']);
+    Route::get('/downloadFullReport',     [ExcelApiController::class, 'getFullReport']);
+    Route::post('/changePassword',        [UserApiController::class, 'changePassword']);
+    Route::post('/userInfoEdit',          [UserApiController::class, 'userInfoEdit']);
+});
+
+Route::post('/departments', DepartmentApiController::class);
 Route::post('/positions',PositionApiController::class);
 
-Route::get('/downloadPersonalReport', [ExcelApiController::class, 'getPersonalReport']);
-Route::get('/downloadTotalReport',    [ExcelApiController::class, 'getTotalReport']);
-Route::get('/downloadFullReport',     [ExcelApiController::class, 'getFullReport']);
 

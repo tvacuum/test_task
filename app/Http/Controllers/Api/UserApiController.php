@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\User\ChangePasswordAction;
 use App\Actions\User\CreateAction;
+use App\Actions\User\InfoEditAction;
 use App\Actions\User\LoginAction;
 use App\Actions\User\LogoutAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\ChangePasswordRequest;
 use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\UserInfoEditRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -37,7 +41,7 @@ class UserApiController extends Controller
     }
 
     /**
-     * Logout user method
+     * Logout Authenticated user method
      *
      * @param LogoutAction $logoutAction
      * @return JsonResponse
@@ -45,5 +49,29 @@ class UserApiController extends Controller
     public function logout(LogoutAction $logoutAction): JsonResponse
     {
         return $logoutAction();
+    }
+
+    /**
+     * Change password for Authenticated user
+     *
+     * @param ChangePasswordRequest $request
+     * @param ChangePasswordAction $changePasswordAction
+     * @return JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request, ChangePasswordAction $changePasswordAction): JsonResponse
+    {
+        return $changePasswordAction($request);
+    }
+
+    /**
+     * Edit Authenticated user info
+     *
+     * @param UserInfoEditRequest $request
+     * @param InfoEditAction $infoEditAction
+     * @return null
+     */
+    public function userInfoEdit(UserInfoEditRequest $request, InfoEditAction $infoEditAction)
+    {
+        return $infoEditAction($request);
     }
 }
