@@ -19,15 +19,12 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'firstname'   => fake()->name(),
-            'lastname'    => fake()->lastName(),
-            'email'       => fake()->unique()->email(),
-            'phone'       => fake()->unique()->e164PhoneNumber(),
-            'password'    => Hash::make('163264'),
-            'birthday'    => fake()->date(),
-            'quote'       => fake()->realText(),
-            'photo'       => fake()->filePath(),
-            'telegram_id' => fake()->numberBetween(9000000000, 9999999999)
+            'firstname' => 'Admin',
+            'lastname'  => 'Admin',
+            'email'     => 'admin@domain.com',
+            'phone'     => '79998887766',
+            'password'  => Hash::make('password'),
+            'is_worker' => 1
         ];
     }
 }

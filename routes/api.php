@@ -1,11 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\DepartmentApiController;
-use App\Http\Controllers\Api\PositionApiController;
-use App\Http\Controllers\Api\UserApiController;
-use App\Http\Controllers\Api\TimeReportApiController;
-use App\Http\Controllers\Api\ExcelApiController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UserApiController;
+use App\Http\Controllers\Api\BookApiController;
+use App\Http\Controllers\Api\ExcelApiController;
+use App\Http\Controllers\Api\CategoryApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,31 +18,32 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::controller(UserApiController::class)->group(function () {
-    Route::post('/register',  'create');
-    Route::post('/login',     'login');
-    Route::post('/logout',    'logout');
+    Route::post('/register',       'create');
+    Route::post('/login',          'login');
+    Route::post('/edit_user',      'userInfoEdit');
+    Route::get('/logout',          'logout');
+    Route::post('/delete_user',    'deleteUser');
+    Route::get('/get_user',        'getUser');
+    Route::get('/get_all_users',   'getAllUsers');
+    Route::get('/get_all_readers', 'getAllReaders');
+    Route::get('/get_all_workers', 'getAllWorkers');
 });
 
-
-Route::controller(TimeReportApiController::class)->group(function () {
-    Route::post('/startDay',  'startDay');
-    Route::post('/pauseDay',  'pauseDay');
-    Route::post('/resumeDay', 'resumeDay');
-    Route::post('/endDay',    'endDay');
-    Route::post('/addComment','addComment');
+Route::controller(BookApiController::class)->group(function () {
+    Route::post('/create_book',  'create');
+    Route::get('/get_book',      'getBook');
+    Route::get('/get_all_books', 'getAllBooks');
+    Route::post('/update_book',  'update');
+    Route::post('/delete_book',  'delete');
 });
 
-Route::group([
-    'prefix' => 'cabinet',
-], function () {
-    Route::get('/downloadPersonalReport', [ExcelApiController::class, 'getPersonalReport']);
-    Route::get('/downloadTotalReport',    [ExcelApiController::class, 'getTotalReport']);
-    Route::get('/downloadFullReport',     [ExcelApiController::class, 'getFullReport']);
-    Route::post('/changePassword',        [UserApiController::class, 'changePassword']);
-    Route::post('/userInfoEdit',          [UserApiController::class, 'userInfoEdit']);
+Route::controller(CategoryApiController::class)->group(function () {
+    Route::post('/create_category', 'create');
+    Route::get('/get_category',     'getCategory');
+    Route::post('/update_category', 'update');
+    Route::post('/delete_category', 'delete');
 });
 
-Route::post('/departments', DepartmentApiController::class);
-Route::post('/positions',PositionApiController::class);
-
-
+Route::controller(ExcelApiController::class)->group(function () {
+    Route::get('/download_books', 'downloadBooks');
+});

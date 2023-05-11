@@ -2,28 +2,26 @@
 
 namespace App\Actions\User;
 
-
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
-class InfoEditAction
+class DeleteAction
 {
     /**
-     * Update user's info
+     * Delete user by id
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $result = User::where('id', $request->id)->update($request->all());
+        $result = User::where('id', $request->id)->delete();
 
         if ($result) {
-            $json['success'] = "User's data successfully updated";
+            $json['success'] = "User successfully deleted";
         } else {
-            $json['error'] = "Failed to update user's data";
+            $json['error'] = "Failed to delete user";
         }
         return response()->json($json);
     }

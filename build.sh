@@ -1,0 +1,1 @@
+docker-compose up -d && docker-compose exec -it backend sh -c "cp .env.example .env && composer install && composer update && php artisan key:generate" && docker restart backend && docker-compose exec -it backend sh -c "php artisan route:cache && php artisan queue:work"

@@ -2,76 +2,63 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\User\ChangePasswordAction;
-use App\Actions\User\CreateAction;
-use App\Actions\User\InfoEditAction;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Actions\User\LoginAction;
+use App\Actions\User\CreateAction;
 use App\Actions\User\LogoutAction;
+use App\Actions\User\DeleteAction;
+use App\Actions\User\InfoEditAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\ChangePasswordRequest;
+use App\Http\Requests\User\UserIdRequest;
+use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UserInfoEditRequest;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class UserApiController extends Controller
 {
-    /**
-     * Create user method
-     *
-     * @param CreateUserRequest $request
-     * @param CreateAction $createAction
-     * @return JsonResponse
-     */
     public function create(CreateUserRequest $request, CreateAction $createAction): JsonResponse
     {
         return $createAction($request);
     }
 
-    /**
-     * Login user method
-     *
-     * @param Request $request
-     * @param LoginAction $loginAction
-     * @return JsonResponse
-     */
     public function login(Request $request, LoginAction $loginAction): JsonResponse
     {
         return $loginAction($request);
     }
 
-    /**
-     * Logout Authenticated user method
-     *
-     * @param LogoutAction $logoutAction
-     * @return JsonResponse
-     */
     public function logout(LogoutAction $logoutAction): JsonResponse
     {
         return $logoutAction();
     }
 
-    /**
-     * Change password for Authenticated user
-     *
-     * @param ChangePasswordRequest $request
-     * @param ChangePasswordAction $changePasswordAction
-     * @return JsonResponse
-     */
-    public function changePassword(ChangePasswordRequest $request, ChangePasswordAction $changePasswordAction): JsonResponse
-    {
-        return $changePasswordAction($request);
-    }
-
-    /**
-     * Edit Authenticated user info
-     *
-     * @param UserInfoEditRequest $request
-     * @param InfoEditAction $infoEditAction
-     * @return null
-     */
-    public function userInfoEdit(UserInfoEditRequest $request, InfoEditAction $infoEditAction)
+    public function userInfoEdit(UserInfoEditRequest $request, InfoEditAction $infoEditAction): JsonResponse
     {
         return $infoEditAction($request);
+    }
+
+    public function deleteUser(UserIdRequest $request, DeleteAction $deleteAction): JsonResponse
+    {
+        return $deleteAction($request);
+    }
+    public function getUser(UserIdRequest $request): User | null
+    {
+        return User::find($request->id);
+    }
+
+    public function getAllUsers(): Collection | null
+    {
+        return User::all();
+    }
+
+    public function getAllReaders(): Collection | null
+    {
+        return User::where('is_worker', '!= 1')->get();
+    }
+
+    public function getAllWorkers(): Collection | null
+    {
+        return User::where('is_worker', '= 1')->get();
     }
 }

@@ -1,74 +1,92 @@
+## Сборка
+>Проект собран в докере. Для старта используется файл **build.sh**. Затем накатить БД `php artisan migrate:fresh --seed`.
+>>**На Windows все делать из-под wsl**.
+>> Развертка в local env:  
+>> `bash build.sh`
+
 # Route map
 
-## Взаимодействия с пользователем
->> ### Регистрация  
->> * `POST` - `../api/register` - `request_body {"firstname": str, "lastname": str, "email": str, "phone": str, "password": str, "password_confirmation": str, "birthday": date(YYYY-MM-DD), "photo": file(jpg, jpeg, png), "position_id": numeric}`  
->> * {"success" : "User successfully created"}  
->> * {"error"   : "Failed to create user"}  
+## Пользователь
+>> ### Регистрация
+>> * `POST` - `../api/register` - `request_body {"firstname": str, "lastname": str, "email": str, "phone": str, "password": str, "password_confirmation": str}`
+>> * {"success" : "User successfully created"}
+>> * {"error"   : "Failed to create user"}
 >> * Validation errors {"message": "The email has already been taken. (and 1 more error)","errors":{"email":["The email has already been taken."],"phone":["The phone has already been taken."]}}
->>> #### Получить все отделы
->>> * `POST` - `../api/departments`
->>> #### Получить все должности отдела
->>> * `POST` - `../api/positions` - `request_body {"department_id": numeric}`
-> 
->> ### Авторизация 
+>
+>> ### Авторизация
 >> * `POST` - `../api/login - request_body {"login(phone)": str || "login(email)": str, "password": str}`
 >> * {"success" : "You are successfully logged in"}
 >> * {"error"   : "Failed to login"}
-> 
+>
 >> ### Редактировать профиль
->> * `POST` - `../api/cabinet/userInfoEdit - request_body {"firstname": str, "lastname": str, "email": str, "phone": str, "birthday": str(YYYY-MM-DD), "quote": str, "telegram_id": numeric}`
+>> * `POST` - `../api/edit_user - request_body {"id": int, "firstname": str, "lastname": str, "email": str, "phone": str}`
 >> * {"success" : "User's data successfully updated"}
 >> * {"error"   : "Failed to update user's data"}
 >
->> ### Редактировать пароль
->> * `POST` - `../api/cabinet/changePassword - request_body {"current_password": str(min 6), "password": str(min 6), "password_confirmation": str(min 6)}`
->> * {"success" : "You successfully changed your password"}
->> * {"error"   : "Current password is incorrect"}
->> * {"error"   : "New Password cannot be same as your current password"}
-> 
->> ### Выход 
->> * `POST` - `../api/logout`
+>> ### Удалить
+>> * `POST` - `../api/delete_user - request_body {"id": int, "firstname": str, "lastname": str, "email": str, "phone": str}`
+>> * {"success" : "User successfully deleted"}
+>> * {"error"   : "Failed to delete user"}
+>
+>> ### Выход
+>> * `GET` - `../api/logout`
 >> * {"success" : "User successfully logged out"}
+>
+>> ### Получить 1 пользователя
+>> * `GET` - `../api/get_user - request_body {"id": int}`
+>
+>> ### Получить всех пользователей
+>> * `GET` - `../api/get_all_users`
+>
+>> ### Получить всех читателей
+>> * `GET` - `../api/get_all_readers`
+>
+>> ### Получить всех работников
+>> * `GET` - `../api/get_all_workers`
 
-## Взаимодействия с рабочим днём
->> ### Начать рабочий день
->> * `POST` - `../api/startDay - request_body {"workplace_id: numeric"}`
->> * {"success" : "You are successfully started working day"}
->> * {"error"   : "Failed to start working day"}
-> 
->> ### Отойти с рабочего места
->> * `POST` - `../api/pauseDay`
->> * {"success" : "You are successfully paused working day"}
->> * {"error"   : "Failed to pause working day"} 
-> 
->> ### Вернуться на рабочее место
->> * `POST` - `../api/resumeDay - request_body {"workplace_id: numeric"}`
->> * {"success" : "You are successfully resumed working day"}
->> * {"error"   : "Failed to resume working day"}
+## Книги
+>> ### Создать
+>> * `POST` - `../api/create_book - request_body {"title": str, "slug": str, "author_id": numeric, "description": str, "rating": numeric(Min:0, Max:5), "cover": image(jpg, jpeg, png)}`
+>> * {"success" : "Book successfully created"}
+>> * {"error"   : "Failed to create book"}
 >
->> ### Закончить рабочий день
->> * `POST` - `../api/endDay - request_body {"without_lunch": bool(null)"}`
->> * {"success" : "You are successfully ended working day"}
->> * {"error"   : "Failed to end working day"}
+>> ### Обновить
+>> * `POST` - `../api/update_book - request_body {"title": str, "slug": str, "author_id": numeric, "description": str, "rating": numeric(Min:0, Max:5)}`
+>> * {"success" : "Book's data successfully updated"}
+>> * {"error"   : "Failed to update book's data"}
 >
->> ### Добавить комментарий к рабочему дню
->> * `POST` - `../api/addComment - request_body {"comment": str"}`
->> * {"success" : "Your comment has been successfully attached"}
->> * {"error"   : "Failed to attach your comment"}
+>> ### Удалить
+>> * `POST` - `../api/delete_book - request_body {"id": int}`
+>> * {"success" : "Book successfully deleted"}
+>> * {"error"   : "Failed to delete book"}
+>
+>> ### Получить 1 книгу
+>> * `GET` - `../api/get_book - request_body {"id": int}`
+>
+>> ### Получить все книги (10шт/стр)
+>> * `GET` - `../api/get_all_books`
 
-## Отчётность
->> ### Скачать отчёт факт-смен для одного сотрудника
->> * `GET` - `../api/cabinet/downloadPersonalReport`
->> * {"success" : "Personal fact report successfully download"}
->> * {"error"   : "Failed to find any records in database for that month"}
+## Категории
+>> ### Создать
+>> * `POST` - `../api/create_category - request_body {"title": str, "slug": str}`
+>> * {"success" : "Category successfully created"}
+>> * {"error"   : "Failed to create category"}
 >
->> ### Скачать отчёт факт-смен для всех сотрудников
->> * `GET` - `../api/cabinet/downloadTotalReport`
->> * {"success" : "Total fact report successfully download"}
->> * {"error"   : "Failed to find any records in database for that month"}
+>> ### Обновить
+>> * `POST` - `../api/update_category - request_body {"id": int, "title": str, "slug": str}`
+>> * {"success" : "Category's data successfully updated"}
+>> * {"error"   : "Failed to update category's data"}
 >
->> ### Скачать полный отчёт для всех сотрудников
->> * `GET` - `../api/cabinet/downloadFullReport`
->> * {"success" : "Full report successfully download"}
->> * {"error"   : "Failed to find any records in database for that month"}
+>> ### Удалить
+>> * `POST` - `../api/delete_category - request_body {"id": int}`
+>> * {"success" : "Category successfully deleted"}
+>> * {"error"   : "Failed to delete Category"}
+>
+>> ### Получить категорию, с книгами которые ей присущи
+>> * `GET` - `../api/get_category - request_body {"id": int}`
+
+## Excel
+>> ### Скачать таблицу xlsx с книгами / категориями / авторами
+>> * `GET` - `../api/download_books`
+>> * {"success" : "Books.xlsx successfully downloaded"}
+>> * {"error"   : "Failed to find any records in database"}

@@ -11,8 +11,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'users';
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -21,16 +19,10 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
-        'birthday',
-        'quote',
-        'photo',
-        'telegram_id',
-        'verified'
+        'is_worker'
     ];
 
     protected $hidden = [
-        'password',
-        'email',
-        'phone'
+        'password'
     ];
 }
